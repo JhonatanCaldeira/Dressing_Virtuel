@@ -1,15 +1,14 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Main Menu</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    </head>
 <body>
-  <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-  <input type="file" name="images" multiple>
-  <button type="submit">Send</button>
-</form>    
+    {% include 'menu.html' %}
 </body>
 </html>

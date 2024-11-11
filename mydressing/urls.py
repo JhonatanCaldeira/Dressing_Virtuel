@@ -16,13 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from photos import views
 from photos.views import (
-    upload_temp_photos
+    upload_temp_photos,
+    create_user,
+    login_view,
+    logout_view,
+    main_view,
+    upload_faceid
 )
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('temp/', upload_temp_photos, name="Load photos"),
+    path('temp/', upload_temp_photos, name="upload_photos"),
+    path('create_user/', create_user, name="create_user"),
+    path('login/', login_view, name="login_view"),
+    path('logout/', logout_view, name="logout_view"),
+    path('main/', main_view, name="main_view"),
+    path('upload_faceid/', upload_faceid, name="upload_faceid"),
 ]

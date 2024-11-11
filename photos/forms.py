@@ -1,8 +1,10 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from .models import ClientProfile
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
-
 
 class MultipleFileField(forms.FileField):
     def __init__(self, *args, **kwargs):
@@ -16,7 +18,6 @@ class MultipleFileField(forms.FileField):
         else:
             result = [single_file_clean(data, initial)]
         return result
-
 
 class FileFieldForm(forms.Form):
     file_field = MultipleFileField()
@@ -32,5 +33,22 @@ class UploadFaceImageForm(forms.Form):
     """
     Form for uploading a single face image.
     """
-    user_id = forms.CharField(max_length=100, label='User ID')
     face_image = forms.ImageField(required=True, label='Face Image')
+
+class SignUpForm(forms.ModelForm):
+
+    password = forms.CharField(widget=forms.PasswordInput, 
+                               help_text="Enter a strong password")
+
+    class Meta:
+        model = ClientProfile
+        fields = ['email', 'password']
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
+        try:
+            validate_password(password)  
+        except ValidationError as e:
+            raise forms.ValidationError(e.messages)
+        return password  
+    
