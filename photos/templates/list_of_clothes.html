@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Photos</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .image-card {
+            width: 200px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        .image-card:hover {
+            transform: scale(1.05);
+        }
+        .image-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .image-card p {
+            margin: 10px 0 5px;
+            font-size: 14px;
+            color: #f5f5f5;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a, .pagination span {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #007BFF;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .pagination a:hover {
+            background-color: #f0f0f0;
+        }
+        .pagination .current {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    {% include 'menu.html' %}
+    <div class="gallery">
+        {% for image in clothes %}
+            <div class="image-card">
+                <img src="{{ image.path }}" alt="{{ image.article }}">
+                <p><strong>Category:</strong> {{ image.category }}</p>
+                <p><strong>Sub-Category:</strong> {{ image.sub_category }}</p>
+                <p><strong>Article:</strong> {{ image.article }}</p>
+                <p><strong>Gender:</strong> {{ image.gender }}</p>
+                <p><strong>Color:</strong> {{ image.color }}</p>
+                <p><strong>Season:</strong> {{ image.season }}</p>
+                <p><strong>Usage Type:</strong> {{ image.usage_type }}</p>
+            </div>
+        {% empty %}
+            <p>No images available.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

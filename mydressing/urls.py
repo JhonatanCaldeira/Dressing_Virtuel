@@ -17,21 +17,28 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from photos.views import (
-    upload_temp_photos,
+    upload_photos,
     create_user,
     login_view,
     logout_view,
     main_view,
-    upload_faceid
+    upload_faceid,
+    show_images_from_user
 )
-
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('temp/', upload_temp_photos, name="upload_photos"),
     path('create_user/', create_user, name="create_user"),
     path('login/', login_view, name="login_view"),
     path('logout/', logout_view, name="logout_view"),
     path('main/', main_view, name="main_view"),
     path('upload_faceid/', upload_faceid, name="upload_faceid"),
+    path('upload_photos/', upload_photos, name="upload_photos"),
+    path('list_of_clothes/', show_images_from_user, name="list_of_clothes"),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

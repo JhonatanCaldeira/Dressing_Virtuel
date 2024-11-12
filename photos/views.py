@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from PIL import Image
-from .models import gallery, ClientProfile
+from .models import ClientProfile
 from .forms import (UploadTempPhotosForm,
                     SignUpForm,
                     UploadFaceImageForm)
@@ -10,8 +10,25 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
 from django.http import HttpResponse
 import base64
+import requests
+import json
 import os
 import imghdr
+
+CELERY_API_SERVER = os.getenv("CELERY_API_SERVER")
+CELERY_API_PORT = os.getenv("CELERY_API_PORT")
+CELERY_API_ENDPONT = os.getenv("CELERY_API_ENDPONT")
+
+CELERY_API = f"http://{CELERY_API_SERVER}:{CELERY_API_PORT}/{CELERY_API_ENDPONT}"
+CELERY_API_KEY = os.getenv("CELERY_API_KEY")
+
+DB_API_SERVER = os.getenv("PG_API_SERVER")
+DB_API_PORT = os.getenv("PG_API_PORT")
+DB_API_ENDPONT = os.getenv("PG_API_ENDPONT")
+
+DB_API = f"http://{DB_API_SERVER}:{DB_API_PORT}/{DB_API_ENDPONT}"
+DB_API_KEY = os.getenv("PG_API_KEY")
+
 
 def main_view(request):
     return render(request, 'index.html')
@@ -46,9 +63,6 @@ def logout_view(request):
 
 def upload_faceid(request):
     user_id = request.session.get('client_id')
-    if not user_id:
-        return HttpResponse("User not authenticated", status=401)
-    
     client = ClientProfile.objects.get(id=user_id)
     existing_face_id = None
 
@@ -74,21 +88,21 @@ def upload_faceid(request):
     return render(request, 'upload_faceid.html', 
                   {'form': form, 'existing_face_id': existing_face_id})
 
-def upload_temp_photos(request):
+def upload_photos(request):
     """
     View to handle uploading up to 10 temporary photos.
     """
     if request.method == 'POST':
         form = UploadTempPhotosForm(request.POST, request.FILES)
         if form.is_valid():
-            user_id = form.cleaned_data['user_id']
+            user_id = request.session.get('client_id')
             photos = request.FILES.getlist('photos') 
 
             if len(photos) > 10:
                 form.add_error('photos', 
                                'You can upload a maximum of 10 photos.')
                 return render(request, 
-                              'photos/upload_temp_photos.html', {'form': form})
+                              'upload_temp_photos.html', {'form': form})
             
             image_paths = []
             tmp_dir = os.path.join(settings.MEDIA_ROOT, str(user_id), 'tmp')
@@ -105,16 +119,39 @@ def upload_temp_photos(request):
                 temp_image.close()
 
             # Call Celery task
-            # identify_clothes.delay(user_id, image_paths)
+            header={"access_token":CELERY_API_KEY}
+            body={"id":user_id,"images":image_paths}
 
-            print(image_paths)
+            response = requests.post(f"{CELERY_API}/task_image_classification",
+                                data=json.dumps(body),
+                                headers=header)
             
+            response =  response.json()
+            print(image_paths)
+
             return JsonResponse({'status': 'Upload successful. Processing started.'})
     else:
         form = UploadTempPhotosForm()
     
-    return render(request, 'photos/upload_temp_photos.html', {'form': form})
+    return render(request, 'upload_photos.html', {'form': form})
 
+def show_images_from_user(request):
+    if request.method == 'GET':
+        user_id = request.session.get('client_id')
 
+        header={"access_token":DB_API_KEY}
+        body={"id":user_id}
+
+        response = requests.get(f"{DB_API}/images_from_client/?client_id={user_id}",
+                            headers=header)
+        
+        articles = json.loads(response.text)
+        for article in articles:
+            article['path'] = article['path'].replace('/home/jcaldeira/media//', settings.MEDIA_URL)
+
+        return render(request, 'list_of_clothes.html', {'clothes': articles})
+    else:
+        return redirect('upload_photos')
+            
 
 

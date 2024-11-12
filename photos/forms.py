@@ -26,7 +26,6 @@ class UploadTempPhotosForm(forms.Form):
     """
     Form for uploading up to 10 temporary photos.
     """
-    user_id = forms.CharField(max_length=100, label='User ID')
     photos = MultipleFileField()
 
 class UploadFaceImageForm(forms.Form):
