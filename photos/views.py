@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from PIL import Image
+from PIL import Image, ExifTags
 from .models import ClientProfile
 from .forms import (UploadTempPhotosForm,
                     SignUpForm,
@@ -111,9 +111,28 @@ def upload_photos(request):
             # Save each photo and record the path
             for photo in photos:
                 new_image_name = utils_image.generate_image_name()
-                temp_image_path = tmp_dir + '/' + new_image_name
+                temp_image_path = os.path.join(tmp_dir, new_image_name)
 
                 temp_image = Image.open(photo)
+
+                # Adjust orientation based on EXIF data
+                try:
+                    for orientation in ExifTags.TAGS.keys():
+                        if ExifTags.TAGS[orientation] == 'Orientation':
+                            break
+                    exif = temp_image._getexif()
+                    if exif is not None:
+                        orientation = exif.get(orientation, None)
+                        if orientation == 3:
+                            temp_image = temp_image.rotate(180, expand=True)
+                        elif orientation == 6:
+                            temp_image = temp_image.rotate(270, expand=True)
+                        elif orientation == 8:
+                            temp_image = temp_image.rotate(90, expand=True)
+                except (AttributeError, KeyError, IndexError):
+                    # No EXIF data or error processing it
+                    pass
+
                 temp_image.save(temp_image_path)
                 image_paths.append(temp_image_path)
                 temp_image.close()
@@ -147,7 +166,7 @@ def show_images_from_user(request):
         
         articles = json.loads(response.text)
         for article in articles:
-            article['path'] = article['path'].replace('/home/jcaldeira/media//', settings.MEDIA_URL)
+            article['path'] = article['path'].replace('/home/jcaldeira/media/', settings.MEDIA_URL)
 
         return render(request, 'list_of_clothes.html', {'clothes': articles})
     else:
