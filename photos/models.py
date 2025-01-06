@@ -32,3 +32,131 @@ class ClientProfile(models.Model):
 
     class Meta:
         db_table = 'tb_client'
+        managed = False
+
+# Model for tb_colors
+class Color(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        db_table = 'tb_colors'
+        managed = False
+
+# Model for tb_gender
+class Gender(models.Model):
+    id = models.AutoField(primary_key=True)
+    gender = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        db_table = 'tb_gender'
+        managed = False
+
+# Model for tb_productcategories
+class ProductCategory(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        db_table = 'tb_productcategories'
+        managed = False
+
+# Model for tb_productsubcategories
+class ProductSubCategory(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+    category = models.ForeignKey(
+        ProductCategory, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name="subcategories",
+        db_column="id_category"
+    )
+
+    class Meta:
+        db_table = 'tb_productsubcategories'
+        managed = False
+
+# Model for tb_articletype
+class ArticleType(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+    subcategory = models.ForeignKey(
+        ProductSubCategory, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name="article_types",
+        db_column="id_subcategory"
+    )
+
+    class Meta:
+        db_table = 'tb_articletype'
+        managed = False
+
+# Model for tb_seasons
+class Season(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        db_table = 'tb_seasons'
+        managed = False
+
+# Model for tb_usagetype
+class UsageType(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        db_table = 'tb_usagetype'
+        managed = False
+
+# Model for tb_imageproduct
+class ImageProduct(models.Model):
+    id = models.AutoField(primary_key=True)
+    path = models.CharField(max_length=255, blank=True, null=True)
+    usage_type = models.ForeignKey(
+        UsageType, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name="image_products_by_usage_type",
+        db_column="id_usagetype"
+    )
+    gender = models.ForeignKey(
+        Gender, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name="image_products_by_gender",
+        db_column="id_gender"
+    )
+    season = models.ForeignKey(
+        Season, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name="image_products_by_season",
+        db_column="id_season"
+    )
+    color = models.ForeignKey(
+        Color, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name="image_products_by_color",
+        db_column="id_color"
+    )
+    article_type = models.ForeignKey(
+        ArticleType, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name="image_products_by_article_type",
+        db_column="id_articletype"
+    )
+    client = models.ForeignKey(
+        ClientProfile, 
+        on_delete=models.CASCADE, 
+        related_name="image_products_by_client",
+        db_column="id_client"
+    )
+
+    class Meta:
+        db_table = 'tb_imageproduct'
+        managed = False

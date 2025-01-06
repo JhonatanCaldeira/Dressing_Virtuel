@@ -23,21 +23,34 @@ from photos.views import (
     logout_view,
     main_view,
     upload_faceid,
-    show_images_from_user
+    show_images_from_user,
+    edit_image_product,
+    delete_multiple_clothes
 )
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
+    #Admin route
     path('admin/', admin.site.urls),
+
+    #Authentication routes
     path('create_user/', create_user, name="create_user"),
     path('login/', login_view, name="login_view"),
     path('logout/', logout_view, name="logout_view"),
+
+    #Main and user management routes
+    path('', main_view, name='index'),
     path('main/', main_view, name="main_view"),
     path('upload_faceid/', upload_faceid, name="upload_faceid"),
     path('upload_photos/', upload_photos, name="upload_photos"),
     path('list_of_clothes/', show_images_from_user, name="list_of_clothes"),
+    path('delete_multiple_clothes/', delete_multiple_clothes, name='delete_multiple_clothes'), 
+
+    #Image product management
+    path('edit_image_product/<int:image_product_id>/', edit_image_product, 
+         name='edit_image_product'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

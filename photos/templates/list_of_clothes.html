@@ -9,24 +9,37 @@
         .gallery {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 20px;  
+            justify-content: space-evenly;  
+            width: 100%;  
+            max-width: 1200px;  
+            margin: 0 auto;  
+        }
+        
+        @media (max-width: 768px) {
+            .gallery {
+                flex-direction: column;  
+            }
         }
         .image-card {
-            width: 200px;
+            flex: 1 1 200px;  
             border: 1px solid #ccc;
             padding: 10px;
             text-align: center;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease-in-out;
+            margin-bottom: 20px;
         }
         .image-card:hover {
             transform: scale(1.05);
         }
+
         .image-card img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
+            cursor: pointer;
         }
         .image-card p {
             margin: 10px 0 5px;
@@ -49,31 +62,106 @@
         .pagination a:hover {
             background-color: #f0f0f0;
         }
+
         .pagination .current {
             background-color: #007BFF;
             color: white;
             font-weight: bold;
         }
+
+        .search-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-bar form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 300px;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+
+
+        .delete-selection {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .btn-delete {
+            padding: 10px 30px;
+            font-size: 14px;
+            border: none;
+            background-color: #FF4136;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            text-align: center;
+            max-width: 200px; /* Define um limite máximo para a largura */
+            width: auto; /* Garante que a largura seja ajustada ao conteúdo */
+        }
+
+        .btn-delete:hover {
+            background-color: #c93025;
+        }
     </style>
 </head>
 <body>
-    <div class="gallery">
-        {% include 'menu.html' %}
+    {% include 'menu.html' %}
 
-        {% for image in clothes %}
-            <div class="image-card">
-                <img src="{{ image.path }}" alt="{{ image.article }}">
-                <p><strong>Category:</strong> {{ image.category }}</p>
-                <p><strong>Sub-Category:</strong> {{ image.sub_category }}</p>
-                <p><strong>Article:</strong> {{ image.article }}</p>
-                <p><strong>Gender:</strong> {{ image.gender }}</p>
-                <p><strong>Color:</strong> {{ image.color }}</p>
-                <p><strong>Season:</strong> {{ image.season }}</p>
-                <p><strong>Usage Type:</strong> {{ image.usage_type }}</p>
-            </div>
-        {% empty %}
-            <p>No images available.</p>
-        {% endfor %}
+    <div class="search-bar">
+        <form method="get" action="{% url 'list_of_clothes' %}">
+            <input type="text" name="query" placeholder="Search by article type..." value="{{ request.GET.query }}">
+            <button type="submit">Search</button>
+        </form>
     </div>
+
+    <form method="post" action="{% url 'delete_multiple_clothes' %}">
+        {% csrf_token %}
+        <div class="delete-selection">
+            <button type="submit" class="btn-delete">Delete Selected</button>
+        </div>
+
+        <div class="gallery">
+            {% for image in clothes %}
+                <div class="image-card">
+                    <a href="{% url 'edit_image_product' image.id %}">
+                        <img src="{{ image.path }}" alt="{{ image.article }}">
+                    </a>
+                    <p><strong>Article:</strong> {{ image.article }}</p>
+                    <label>
+                        <input type="checkbox" name="selected_clothes" value="{{ image.id }}">
+                        Delete
+                    </label>
+                </div>
+            {% empty %}
+                <p>No images available.</p>
+            {% endfor %}
+        </div>
+    </form>
 </body>
 </html>

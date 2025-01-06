@@ -1,14 +1,17 @@
 from django.http import JsonResponse
 from PIL import Image, ExifTags
-from .models import ClientProfile
+from .models import ClientProfile, ImageProduct
 from .forms import (UploadTempPhotosForm,
                     SignUpForm,
-                    UploadFaceImageForm)
+                    UploadFaceImageForm,
+                    EditImageProductForm)
 from django.conf import settings
 from utils import utils_image
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate
 from django.http import HttpResponse
+from django.contrib import messages
+from django.db.models import Q
 import base64
 import requests
 import json
@@ -154,7 +157,7 @@ def upload_photos(request):
     
     return render(request, 'upload_photos.html', {'form': form})
 
-def show_images_from_user(request):
+def show_images_from_user_old(request):
     if request.method == 'GET':
         user_id = request.session.get('client_id')
 
@@ -171,6 +174,70 @@ def show_images_from_user(request):
         return render(request, 'list_of_clothes.html', {'clothes': articles})
     else:
         return redirect('upload_photos')
-            
+    
+def delete_multiple_clothes(request):
+    user_id = request.session.get('client_id')
 
+    if not user_id:
+        return redirect('login_view')
+    
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_clothes') 
+        if selected_ids:
+            ImageProduct.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, "Selected images have been deleted.")
+            return redirect('list_of_clothes')
+    else:
+        return redirect('list_of_clothes')
 
+   
+def show_images_from_user(request):
+    if request.method == 'GET':
+        user_id = request.session.get('client_id')
+
+        if not user_id:
+            return redirect('login_view')
+
+        query = request.GET.get('query', '').strip()
+        clothes_data = []
+        clothes = ImageProduct.objects.filter(client_id=user_id)
+
+        if query:
+            clothes = clothes.filter(
+                            Q(article_type__name__icontains=query) |
+                            Q(color__name__icontains=query) |
+                            Q(gender__gender__icontains=query) |
+                            Q(season__name__icontains=query) |
+                            Q(usage_type__name__icontains=query)
+                        )
+        else:
+            clothes = clothes.select_related(
+                'article_type', 'color', 'gender', 'season', 'usage_type'
+            )
+
+        for item in clothes:
+            clothes_data.append({
+                'id': item.id,
+                'path': item.path.replace('/home/jcaldeira/media/', settings.MEDIA_URL) if item.path else None,
+                'name': item.article_type.name if item.article_type else "No Article",
+                'article': item.article_type.name if item.article_type else None,
+            })
+
+        return render(request, 'list_of_clothes.html', {'clothes': clothes_data})
+    else:
+        return redirect('upload_photos')            
+
+def edit_image_product(request, image_product_id):
+    """
+    View to edit an existing ImageProduct.
+    """
+    image_product = get_object_or_404(ImageProduct, id=image_product_id)
+
+    if request.method == 'POST':
+        form = EditImageProductForm(request.POST, instance=image_product)
+        if form.is_valid():
+            form.save()  
+            return redirect('show_images_from_user')
+    else:
+        form = EditImageProductForm(instance=image_product) 
+    return render(request, 'edit_image_product.html', {'form': form})

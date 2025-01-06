@@ -1,7 +1,18 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
-from .models import ClientProfile
+from .models import (
+    ClientProfile,
+    ImageProduct, 
+    ArticleType,
+    ProductSubCategory,
+    ProductCategory,
+    Season,
+    Color,
+    Gender,
+    UsageType
+)
+
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -50,4 +61,51 @@ class SignUpForm(forms.ModelForm):
         except ValidationError as e:
             raise forms.ValidationError(e.messages)
         return password  
-    
+
+
+class EditImageProductForm(forms.ModelForm):
+    """
+    Form to edit an ImageProduct instance.
+    """
+    usage_type = forms.ModelChoiceField(
+        queryset=UsageType.objects.all(),
+        required=False,
+        label="Usage Type"
+    )
+    gender = forms.ModelChoiceField(
+        queryset=Gender.objects.all(),
+        required=False,
+        label="Gender"
+    )
+    season = forms.ModelChoiceField(
+        queryset=Season.objects.all(),
+        required=False,
+        label="Season"
+    )
+    color = forms.ModelChoiceField(
+        queryset=Color.objects.all(),
+        required=False,
+        label="Color"
+    )
+    article_type = forms.ModelChoiceField(
+        queryset=ArticleType.objects.all(),
+        required=False,
+        label="Article Type"
+    )
+    client = forms.HiddenInput()  # Optionally hide the client field if not editable
+
+    class Meta:
+        model = ImageProduct
+        fields = ['path', 'usage_type', 'gender', 'season', 'color', 'article_type']
+        widgets = {
+            'path': forms.TextInput(attrs={'placeholder': 'Enter image path'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Optional: Set initial choices or ordering for fields
+        self.fields['usage_type'].queryset = UsageType.objects.order_by('name')
+        self.fields['gender'].queryset = Gender.objects.order_by('gender')
+        self.fields['season'].queryset = Season.objects.order_by('name')
+        self.fields['color'].queryset = Color.objects.order_by('name')
+        self.fields['article_type'].queryset = ArticleType.objects.order_by('name')

@@ -1,0 +1,84 @@
+/* static/css/styles.css */
+
+body {
+    background-color: #2e2e2e;
+    color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding-top: 80px; /* Adicionado para espaçar o conteúdo do menu fixo */
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    margin: 0 auto 20px auto; /* Ajuste para centralizar */
+}
+
+h1, h2 {
+    text-align: center;
+    color: #f5f5f5;
+}
+
+button, .btn {
+    background-color: #444;
+    color: #f5f5f5;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover, .btn:hover {
+    background-color: #555;
+}
+
+ul.menu {
+    display: flex;
+    justify-content: center; /* Alinha o menu ao centro */
+    list-style: none;
+    padding: 10px 0;
+    background-color: #1a1a1a;
+    margin: 0;
+    border-radius: 8px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Garante que o menu fica acima do conteúdo */
+}
+
+ul.menu li a {
+    color: #f5f5f5;
+    text-decoration: none;
+    padding: 0 15px; /* Espaço entre os itens do menu */
+}
+
+ul.menu li a:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.text-danger {
+    color: #e74c3c;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="file"],
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background-color: #2e2e2e;
+    color: #f5f5f5;
+}

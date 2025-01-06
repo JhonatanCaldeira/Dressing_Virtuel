@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- Adicionando meta tag para responsividade -->
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
@@ -16,11 +17,11 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" placeholder="Enter your email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" name="password" required>
+                <input type="password" name="password" placeholder="Enter your password" required>
             </div>
             <button type="submit">Login</button>
         </form>

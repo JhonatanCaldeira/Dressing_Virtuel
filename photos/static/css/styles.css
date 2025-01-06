@@ -5,9 +5,84 @@ body {
     color: #f5f5f5;
     font-family: Arial, sans-serif;
     margin: 0;
-    padding-top: 80px; /* Adicionado para espaçar o conteúdo do menu fixo */
+    padding-top: 80px;
 }
 
+ul.menu.side {
+    display: none; /* O menu começa oculto */
+    position: absolute;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    background-color: #333;
+    height: 100%;
+    padding: 20px;
+    list-style-type: none;
+    margin: 0;
+    transition: left 0.3s ease, display 0s linear 0.3s; /* Transição para o lado + tempo para ocultar */
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+ul.menu.side.open {
+    display: block; /* O menu é exibido quando a classe 'open' é adicionada */
+    left: 0; /* Menu abre quando a classe 'open' é adicionada */
+}
+/* Botão de alternância do menu lateral */
+.menu-toggle {
+    display: block;
+    background-color: #444;
+    color: #f5f5f5;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1100;
+    border-radius: 4px;
+}
+
+.menu-toggle:hover {
+    background-color: #555;
+}
+
+/* Estilo dos itens do menu */
+ul.menu.side li {
+    padding: 15px 0;
+    text-align: left;
+    border-bottom: 1px solid #444;
+}
+
+ul.menu.side li a {
+    color: #f5f5f5;
+    text-decoration: none;
+    font-size: 18px;
+    padding-left: 10px;
+    display: block;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+ul.menu.side li a:hover {
+    background-color: #444;
+    color: #007BFF;
+    padding-left: 20px;
+}
+
+/* Menu lateral fixo em telas grandes */
+@media (min-width: 769px) {
+    ul.menu.side {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 250px;
+    }
+    
+
+}
+
+/* Estilos para o corpo da página */
 .container {
     width: 100%;
     max-width: 800px;
@@ -15,7 +90,7 @@ body {
     background-color: #333;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    margin: 0 auto 20px auto; /* Ajuste para centralizar */
+    margin: 0 auto 20px auto;
 }
 
 h1, h2 {
@@ -23,62 +98,74 @@ h1, h2 {
     color: #f5f5f5;
 }
 
-button, .btn {
-    background-color: #444;
-    color: #f5f5f5;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+h2 {
+    font-size: 2em;
 }
 
-button:hover, .btn:hover {
-    background-color: #555;
-}
-
-ul.menu {
-    display: flex;
-    justify-content: center; /* Alinha o menu ao centro */
-    list-style: none;
-    padding: 10px 0;
-    background-color: #1a1a1a;
-    margin: 0;
-    border-radius: 8px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000; /* Garante que o menu fica acima do conteúdo */
-}
-
-ul.menu li a {
-    color: #f5f5f5;
-    text-decoration: none;
-    padding: 0 15px; /* Espaço entre os itens do menu */
-}
-
-ul.menu li a:hover {
-    text-decoration: underline;
-}
-
+/* Estilos para o login */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Maior espaço entre os campos */
 }
 
-.text-danger {
-    color: #e74c3c;
-}
-
-input[type="text"],
-input[type="password"],
 input[type="email"],
-input[type="file"],
-select {
-    width: 100%;
-    padding: 10px;
+input[type="password"] {
+    width: 100%;  /* Garante que os campos de entrada ocupem toda a largura disponível */
+    padding: 12px;  /* Aumenta o padding para melhorar a experiência em dispositivos móveis */
     border-radius: 4px;
     border: 1px solid #444;
     background-color: #2e2e2e;
     color: #f5f5f5;
+    box-sizing: border-box; /* Garante que o padding não afete o tamanho do campo */
+}
+
+button[type="submit"] {
+    width: 100%;  /* O botão ocupa toda a largura disponível */
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        max-width: 100%;
+    }
+
+    h1, h2 {
+        font-size: 1.5em;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    button[type="submit"] {
+        padding: 12px;
+        font-size: 1.1em;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.2em;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    button[type="submit"] {
+        padding: 10px;
+        font-size: 1em;
+    }
 }
