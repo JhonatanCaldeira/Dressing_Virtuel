@@ -91,6 +91,8 @@ def upload_faceid(request):
     return render(request, 'upload_faceid.html', 
                   {'form': form, 'existing_face_id': existing_face_id})
 
+
+
 def upload_photos(request):
     """
     View to handle uploading up to 10 temporary photos.
@@ -231,13 +233,17 @@ def edit_image_product(request, image_product_id):
     """
     View to edit an existing ImageProduct.
     """
+    user_id = request.session.get('client_id')
+
+    if not user_id:
+        return redirect('login_view')
+
     image_product = get_object_or_404(ImageProduct, id=image_product_id)
 
     if request.method == 'POST':
         form = EditImageProductForm(request.POST, instance=image_product)
         if form.is_valid():
             form.save()  
-            return redirect('show_images_from_user')
     else:
         form = EditImageProductForm(instance=image_product) 
     return render(request, 'edit_image_product.html', {'form': form})

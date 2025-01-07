@@ -25,13 +25,13 @@
     const sideMenu = document.getElementById('sideMenu');
 
     menuToggle.addEventListener('click', function(event) {
-        sideMenu.classList.toggle('open'); // Alterna a classe 'open'
-        event.stopPropagation(); // Impede que o clique no botão afete a ação de fechamento
+        sideMenu.classList.toggle('open');
+        event.stopPropagation(); 
     });
 
     document.body.addEventListener('click', function(event) {
         if (!sideMenu.contains(event.target) && !menuToggle.contains(event.target)) {
-            sideMenu.classList.remove('open'); // Remove a classe 'open' quando clicar fora do menu
+            sideMenu.classList.remove('open'); 
         }
     });
 

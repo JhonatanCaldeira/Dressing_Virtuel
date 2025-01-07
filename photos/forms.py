@@ -1,5 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
+from django.conf import settings
+
 from django.contrib.auth.password_validation import validate_password
 from .models import (
     ClientProfile,
@@ -92,13 +95,13 @@ class EditImageProductForm(forms.ModelForm):
         required=False,
         label="Article Type"
     )
-    client = forms.HiddenInput()  # Optionally hide the client field if not editable
+    client = forms.HiddenInput()
 
     class Meta:
         model = ImageProduct
         fields = ['path', 'usage_type', 'gender', 'season', 'color', 'article_type']
         widgets = {
-            'path': forms.TextInput(attrs={'placeholder': 'Enter image path'}),
+            'path': forms.TextInput(attrs={'readonly': 'readonly', 'style': 'display:none;'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -109,3 +112,10 @@ class EditImageProductForm(forms.ModelForm):
         self.fields['season'].queryset = Season.objects.order_by('name')
         self.fields['color'].queryset = Color.objects.order_by('name')
         self.fields['article_type'].queryset = ArticleType.objects.order_by('name')
+
+        if self.instance and self.instance.path:
+            self.fields['path'].label = "Current Image"
+            image_path = (self.instance.path).replace('/home/jcaldeira/media/', settings.MEDIA_URL)
+            self.fields['path'].help_text = mark_safe(
+                f'<img src="{image_path}" alt="Image" style="max-width: 300px; max-height: 300px; border-radius: 8px;"/>'
+        )

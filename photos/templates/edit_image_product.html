@@ -73,7 +73,7 @@
             {{ form.as_p }}
             <div class="button-container">
                 <button type="submit">Save Changes</button>
-                <a href="{% url 'show_images_from_user' %}" class="cancel">Cancel</a>
+                <button type="button" onclick="window.location.href='{% url 'list_of_clothes' %}'" class="cancel">Cancel</button>
             </div>
         </form>
     </div>
