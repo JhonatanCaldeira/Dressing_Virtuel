@@ -3,32 +3,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Photos</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Dressing - Add Clothes</title>
 </head>
 <body>
     {% include 'menu.html' %}
-
-    <div class="container">
-        <h2>Select your photos</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.user_id.label_tag }}
-                {{ form.user_id }}
-                {% if form.user_id.errors %}
-                    <div class="text-danger">{{ form.user_id.errors }}</div>
-                {% endif %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-header text-center">
+                        <h4>Select your photos</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.user_id.label_tag }}
+                                {{ form.user_id }}
+                                {% if form.user_id.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ form.user_id.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.photos }}
+                                {% if form.photos.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ form.photos.errors }}
+                                </div>
+                                {% endif %}
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}" role="alert">
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Send Photos</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                {{ form.photos.label_tag }}
-                {{ form.photos }}
-                {% if form.photos.errors %}
-                    <div class="text-danger">{{ form.photos.errors }}</div>
-                {% endif %}
-            </div>
-            <button type="submit">Send Photos</button>
-        </form>
+        </div>
     </div>
 </body>
 </html>

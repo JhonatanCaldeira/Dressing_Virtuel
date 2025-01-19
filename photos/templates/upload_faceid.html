@@ -4,28 +4,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update FaceID</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Dressing - Change FaceID Image</title>
 </head>
 <body>
     {% include 'menu.html' %}
 
-    <div class="container">
-        <h2>Update your Face ID</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Upload FaceID</button>
-        </form>  
-
-        {% if existing_face_id %}
-            <h2>Current FaceID:</h2>
-            <img src="{{ existing_face_id }}" alt="Current Face ID" width="150">
-        {% else %}
-            <p>No face ID image available.</p>
-        {% endif %}
-
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-header text-center">
+                        <h4>Update Face Recognition Photo</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <!-- Exibição da imagem atual -->
+                                {% if existing_face_id %}
+                                    <img src="{{ existing_face_id }}" alt="Current Face ID" class="img-fluid" style="max-width: 150px; max-height: 150px;">
+                                {% else %}
+                                    <p>No face ID image available.</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-9">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        {{ form.face_image }}
+                                        <!-- Exibir erros caso existam -->
+                                        {% if form.face_image.errors %}
+                                            <div class="alert alert-danger" role="alert">
+                                                {% for error in form.face_image.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update FaceID</button>
+                                </form> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+            
 </body>
 </html>

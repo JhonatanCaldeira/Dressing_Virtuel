@@ -13,6 +13,7 @@ class ClientProfile(models.Model):
     face_id = models.TextField(blank=True, null=True) 
     password = models.CharField(max_length=128) 
     last_login = models.DateField()
+    accept_terms = models.BooleanField(default=False)
 
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)

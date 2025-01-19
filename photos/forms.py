@@ -16,9 +16,12 @@ from .models import (
     UsageType
 )
 
-
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('attrs', {}).update({'class': 'form-control'})
+        super().__init__(*args, **kwargs)
 
 class MultipleFileField(forms.FileField):
     def __init__(self, *args, **kwargs):
@@ -46,16 +49,37 @@ class UploadFaceImageForm(forms.Form):
     """
     Form for uploading a single face image.
     """
-    face_image = forms.ImageField(required=True, label='Face Image')
+    face_image = forms.ImageField(required=True, 
+                                  label='Face Image',
+                                  widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
 
 class SignUpForm(forms.ModelForm):
 
-    password = forms.CharField(widget=forms.PasswordInput, 
-                               help_text="Enter a strong password")
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
+        help_text="Password must have at least 9 characters, including at least one special character from !@#$%^&*()_+"
+    )
+
+    accept_terms = forms.BooleanField(
+        required=True,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        error_messages={'required': 'You must accept the terms to register.'}
+    )
 
     class Meta:
         model = ClientProfile
-        fields = ['email', 'password']
+        fields = ['email', 'password', 'accept_terms']
+        
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control', 
+                                             'placeholder': 'Enter your email'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if 'class' not in field.widget.attrs:
+                field.widget.attrs['class'] = 'form-control'
 
     def clean_password(self):
         password = self.cleaned_data.get("password")
@@ -73,27 +97,32 @@ class EditImageProductForm(forms.ModelForm):
     usage_type = forms.ModelChoiceField(
         queryset=UsageType.objects.all(),
         required=False,
-        label="Usage Type"
+        label="Usage",
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     gender = forms.ModelChoiceField(
         queryset=Gender.objects.all(),
         required=False,
-        label="Gender"
+        label="Gender",
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     season = forms.ModelChoiceField(
         queryset=Season.objects.all(),
         required=False,
-        label="Season"
+        label="Season",
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     color = forms.ModelChoiceField(
         queryset=Color.objects.all(),
         required=False,
-        label="Color"
+        label="Color",
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     article_type = forms.ModelChoiceField(
         queryset=ArticleType.objects.all(),
         required=False,
-        label="Article Type"
+        label="Article",
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     client = forms.HiddenInput()
 
@@ -114,7 +143,7 @@ class EditImageProductForm(forms.ModelForm):
         self.fields['article_type'].queryset = ArticleType.objects.order_by('name')
 
         if self.instance and self.instance.path:
-            self.fields['path'].label = "Current Image"
+            self.fields['path'].label = ""
             image_path = (self.instance.path).replace('/home/jcaldeira/media/', settings.MEDIA_URL)
             self.fields['path'].help_text = mark_safe(
                 f'<img src="{image_path}" alt="Image" style="max-width: 300px; max-height: 300px; border-radius: 8px;"/>'

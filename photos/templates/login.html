@@ -4,27 +4,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Dressing - Login</title>
 </head>
 <body>
     {% include 'menu.html' %}
-
-    <div class="container">
-        <h2>Login</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" name="email" placeholder="Enter your email" required>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-header text-center">
+                        <h4>Login please</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if error_message %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error_message }}
+                        </div>
+                        {% endif %}
+                        <form method="post" class="mt-4">
+                            {% csrf_token %}
+                            {{ form.non_field_errors }}
+                            <div class="mb-3">
+                                <label for="email" class="form-label mt-4">Email address</label>
+                                <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label mt-4">Password</label>
+                                <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="off" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Login</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
+        </div>
     </div>
 </body>
 </html>

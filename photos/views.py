@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from django.http import JsonResponse
 from PIL import Image, ExifTags
 from .models import ClientProfile, ImageProduct
@@ -41,6 +42,7 @@ def create_user(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            user.last_login = now()
             user.save()
             return redirect('login_view') 
     else:
@@ -57,7 +59,9 @@ def login_view(request):
             request.session['client_id'] = user.id
             return redirect('main_view') 
         else:
-            return HttpResponse("Invalid email or password", status=401)
+            error_message = "Invalid email or password. Please try again."
+            return render(request, 'login.html', {'error_message': error_message})
+    
     return render(request, 'login.html')
 
 def logout_view(request):
@@ -149,14 +153,13 @@ def upload_photos(request):
             response = requests.post(f"{CELERY_API}/task_image_classification",
                                 data=json.dumps(body),
                                 headers=header)
-            
-            response =  response.json()
-            print(image_paths)
-
-            return JsonResponse({'status': 'Upload successful. Processing started.'})
+            if response.status_code == 200:
+                messages.success(request, "Your images were uploaded successfully.")
+            else:
+                messages.error(request, "There was an error uploading your images.")
     else:
         form = UploadTempPhotosForm()
-    
+
     return render(request, 'upload_photos.html', {'form': form})
 
 def show_images_from_user_old(request):

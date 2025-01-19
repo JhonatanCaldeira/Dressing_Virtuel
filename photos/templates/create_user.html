@@ -4,20 +4,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Dressing - Create account</title>
 </head>
 <body>
     {% include 'menu.html' %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-header text-center">
+                        <h4>Create Account</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="mt-4">
+                            {% csrf_token %}
+                            {{ form.non_field_errors }}
 
-    <div class="container">
-        <h2>Create Account</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Create Account</button>
-        </form>  
+                            <div class="mb-3">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                                {{ form.email.errors }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.password.label_tag }}
+                                {{ form.password }}
+                                {{ form.password.help_text }}
+                                {{ form.password.errors }}
+                            </div>
+                            <div class="form-check">
+                                {{ form.accept_terms }}
+                                <label class="form-check-label" for="id_accept_terms">
+                                    I have read and accept the 
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a>.
+                                </label>
+                                {{ form.accept_terms.errors }}
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Create Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Here are the terms and conditions related to GDPR compliance...</p>
+                    <ul>
+                        <li>Your data will be stored securely.</li>
+                        <li>You can request data deletion anytime.</li>
+                        <li>We will never share your data without consent.</li>
+                        <!-- Add more terms as needed -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

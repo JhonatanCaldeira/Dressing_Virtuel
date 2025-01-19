@@ -1,0 +1,11 @@
+services:
+  vrituel_dressing_frontend:
+    build: .
+    container_name: django_virtuel_dressing
+    ports: 
+      - 8000:8000
+    env_file:
+      - config/.env
+
+networks:
+  bridge:

@@ -1,0 +1,41 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<button class="menu-toggle" id="menuToggle">☰</button>
+
+<ul class="menu side" id="sideMenu">
+    <li><a href="{% url 'upload_photos' %}"><i class="fas fa-upload"></i> Upload Photos</a></li>
+    <li><a href="{% url 'list_of_clothes' %}"><i class="fas fa-tshirt"></i> List of Clothes</a></li>
+    <li><a href="{% url 'upload_faceid' %}"><i class="fas fa-id-card"></i> Update FaceID</a></li>
+
+    {% if not client_authenticated %}
+    <li><a href="{% url 'create_user' %}"><i class="fas fa-user-plus"></i> Create User</a></li>
+    <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+    {% endif %}
+
+    {% if client_authenticated %}
+    <li><a href="{% url 'logout_view' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    {% endif %}
+</ul>
+
+
+<script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+
+    menuToggle.addEventListener('click', function(event) {
+        sideMenu.classList.toggle('open');
+        event.stopPropagation(); 
+    });
+
+    document.body.addEventListener('click', function(event) {
+        if (!sideMenu.contains(event.target) && !menuToggle.contains(event.target)) {
+            sideMenu.classList.remove('open'); 
+        }
+    });
+
+    sideMenu.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+</script>

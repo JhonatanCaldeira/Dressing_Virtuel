@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update FaceID</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    {% include 'menu.html' %}
+
+    <div class="container">
+        <h2>Update your Face ID</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Upload FaceID</button>
+        </form>  
+
+        {% if existing_face_id %}
+            <h2>Current FaceID:</h2>
+            <img src="{{ existing_face_id }}" alt="Current Face ID" width="150">
+        {% else %}
+            <p>No face ID image available.</p>
+        {% endif %}
+
+    </div>
+</body>
+</html>
