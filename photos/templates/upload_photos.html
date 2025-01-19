@@ -10,7 +10,7 @@
     {% include 'menu.html' %}
 
     <div class="container">
-        <h2>Upload Temporary Photos</h2>
+        <h2>Select your photos</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
@@ -27,7 +27,7 @@
                     <div class="text-danger">{{ form.photos.errors }}</div>
                 {% endif %}
             </div>
-            <button type="submit">Upload Photos</button>
+            <button type="submit">Send Photos</button>
         </form>
     </div>
 </body>

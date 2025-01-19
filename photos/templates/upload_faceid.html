@@ -5,22 +5,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Face ID</title>
+    <title>Update FaceID</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     {% include 'menu.html' %}
 
     <div class="container">
-        <h2>Upload Face ID</h2>
+        <h2>Update your Face ID</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Upload Face ID</button>
+            <button type="submit">Upload FaceID</button>
         </form>  
 
         {% if existing_face_id %}
-            <h2>Current Face ID Image:</h2>
+            <h2>Current FaceID:</h2>
             <img src="{{ existing_face_id }}" alt="Current Face ID" width="150">
         {% else %}
             <p>No face ID image available.</p>
