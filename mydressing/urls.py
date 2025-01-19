@@ -25,7 +25,8 @@ from photos.views import (
     upload_faceid,
     show_images_from_user,
     edit_image_product,
-    delete_multiple_clothes
+    delete_multiple_clothes,
+    get_suggestion
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -46,6 +47,7 @@ urlpatterns = [
     path('upload_faceid/', upload_faceid, name="upload_faceid"),
     path('upload_photos/', upload_photos, name="upload_photos"),
     path('list_of_clothes/', show_images_from_user, name="list_of_clothes"),
+    path('suggestion/', get_suggestion, name="suggestion"),
     path('delete_multiple_clothes/', delete_multiple_clothes, name='delete_multiple_clothes'), 
 
     #Image product management

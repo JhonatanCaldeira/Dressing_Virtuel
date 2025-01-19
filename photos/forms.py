@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.conf import settings
-
+from datetime import date
 from django.contrib.auth.password_validation import validate_password
 from .models import (
     ClientProfile,
@@ -148,3 +148,50 @@ class EditImageProductForm(forms.ModelForm):
             self.fields['path'].help_text = mark_safe(
                 f'<img src="{image_path}" alt="Image" style="max-width: 300px; max-height: 300px; border-radius: 8px;"/>'
         )
+
+class SuggestionForm(forms.Form):
+    city = forms.CharField(
+        required=False, 
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter city name'})
+    )
+    date = forms.DateField(
+        required=False, 
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        label="Select a date",
+    )
+    season = forms.ModelChoiceField(
+        required=False, 
+        queryset=Season.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label="Select a season"
+    )
+    usage_type = forms.ModelChoiceField(
+        required=False, 
+        queryset=UsageType.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label="Select usage type"
+    )
+
+    def clean_date(self):
+        selected_date = self.cleaned_data['date']
+        if selected_date:
+            if selected_date <= date.today():
+                raise forms.ValidationError("Please select a future date.")
+        return selected_date
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        city = cleaned_data.get('city')
+        date = cleaned_data.get('date')
+        season = cleaned_data.get('season')
+
+        if season:
+            cleaned_data['city'] = None
+            cleaned_data['date'] = None
+        elif not city or not date:
+            raise forms.ValidationError(
+                "If no season is selected, both city and date are required."
+            )
+        
+        return cleaned_data

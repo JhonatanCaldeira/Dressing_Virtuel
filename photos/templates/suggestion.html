@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dressing - Login</title>
+</head>
+<body>
+    {% include 'menu.html' %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="text-center">Let us help you with a suggestion</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="alert alert-dismissible alert-danger">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-dismissible alert-danger">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </form>
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% if image_combinations %}
+    <div class="mt-4">
+            {% if temperature %}
+                <h5>Estimated temperature in {{form.city.value}}: {{ temperature }}°C</h5>
+            {% else %}
+                <h5>Suggestions: </h5>
+            {% endif %}
+        <div class="row">
+            {% for combo in image_combinations %}
+                <div class="col-md-4 mb-4">
+                    <div class="card text-white bg-dark mb-3">
+                        <div class="card-header text-center">
+                            Combination {{ forloop.counter }}
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="row">
+                                <img src="{{ combo.top }}" alt="Top" class="img-fluid mb-2 border" style="max-height: 200px; object-fit: contain;">
+                            </div>
+                            <div class="row">
+                                <img src="{{ combo.bottom }}" alt="Bottom" class="img-fluid border" style="max-height: 200px; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+</body>
+</html>

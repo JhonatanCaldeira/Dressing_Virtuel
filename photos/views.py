@@ -1,11 +1,12 @@
 from django.utils.timezone import now
 from django.http import JsonResponse
 from PIL import Image, ExifTags
-from .models import ClientProfile, ImageProduct
+from .models import ClientProfile, ImageProduct, Season, UsageType
 from .forms import (UploadTempPhotosForm,
                     SignUpForm,
                     UploadFaceImageForm,
-                    EditImageProductForm)
+                    EditImageProductForm,
+                    SuggestionForm)
 from django.conf import settings
 from utils import utils_image
 from django.shortcuts import render, get_object_or_404, redirect
@@ -94,8 +95,6 @@ def upload_faceid(request):
 
     return render(request, 'upload_faceid.html', 
                   {'form': form, 'existing_face_id': existing_face_id})
-
-
 
 def upload_photos(request):
     """
@@ -194,8 +193,7 @@ def delete_multiple_clothes(request):
             return redirect('list_of_clothes')
     else:
         return redirect('list_of_clothes')
-
-   
+ 
 def show_images_from_user(request):
     if request.method == 'GET':
         user_id = request.session.get('client_id')
@@ -250,3 +248,64 @@ def edit_image_product(request, image_product_id):
     else:
         form = EditImageProductForm(instance=image_product) 
     return render(request, 'edit_image_product.html', {'form': form})
+
+def get_suggestion(request):
+    user_id = request.session.get('client_id')
+
+    if not user_id:
+        return redirect('login_view')
+
+    if request.method == 'POST':
+        form = SuggestionForm(request.POST)
+        suggestions = None  
+        image_combinations = [] 
+
+        if form.is_valid():
+            city = form.cleaned_data.get('city')
+            date = form.cleaned_data.get('date')
+            season_id = form.cleaned_data.get('season')
+            usage_type_id = form.cleaned_data.get('usage_type')
+
+            parameters = f"client_id={user_id}"
+
+            if season_id:
+                season = Season.objects.get(id=season_id.id).name
+                parameters += f"&season={season}"
+            else:
+                parameters += f"&address={city}&date={date}"
+
+            if usage_type_id:
+                usage_type = UsageType.objects.get(id=usage_type_id.id).name
+                parameters += f"&usage_type={usage_type}"
+
+            header={"access_token":CELERY_API_KEY}
+            response = requests.get(f"{CELERY_API}/get_suggestions?{parameters}",
+                                headers=header)
+            
+            if response.status_code == 200:
+                suggestions = json.loads(response.text)
+                #messages.success(request, suggestions)
+
+                for match in suggestions.get('matchs', []):
+                    top_image = get_object_or_404(ImageProduct, id=match['id_top'])
+                    bottom_image = get_object_or_404(ImageProduct, id=match['id_bottom'])
+                    image_combinations.append({
+                        'top': top_image.path.replace('/home/jcaldeira/media/', settings.MEDIA_URL) if top_image.path else None,
+                        'bottom': bottom_image.path.replace('/home/jcaldeira/media/', settings.MEDIA_URL) if bottom_image.path else None
+                })
+                    
+                return render(request, 'suggestion.html', {
+                    'form': form,
+                    'image_combinations': image_combinations,
+                    'temperature': suggestions.get('temperature') if suggestions else None
+                })
+
+            elif response.status_code == 403:
+                message_error = json.loads(response.text)
+                messages.warning(request, message_error['detail'])
+            else:
+                messages.warning(request, "There was an error getting suggestions.")
+    else:
+        form = SuggestionForm()
+    
+    return render(request, 'suggestion.html', {'form': form})
