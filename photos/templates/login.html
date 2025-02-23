@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dressing - Login</title>
+    <title>Dressing - User Login</title>
 </head>
 <body>
     {% include 'menu.html' %}
@@ -17,7 +17,7 @@
                     </div>
                     <div class="card-body">
                         {% if error_message %}
-                        <div class="alert alert-danger" role="alert">
+                        <div class="alert alert-danger" role="alert" aria-live="assertive">
                             {{ error_message }}
                         </div>
                         {% endif %}

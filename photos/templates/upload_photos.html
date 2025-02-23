@@ -29,12 +29,12 @@
                             <div class="mb-3">
                                 {{ form.photos }}
                                 {% if form.photos.errors %}
-                                <div class="alert alert-danger" role="alert">
+                                <div class="alert alert-danger" role="alert" aria-live="assertive">
                                     {{ form.photos.errors }}
                                 </div>
                                 {% endif %}
                                 {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }}" role="alert">
+                                <div class="alert alert-{{ message.tags }}" role="alert" aria-live="assertive">
                                     {{ message }}
                                 </div>
                                 {% endfor %}

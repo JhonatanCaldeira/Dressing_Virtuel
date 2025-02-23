@@ -89,6 +89,13 @@ DATABASES = {
         'PORT': os.getenv("PG_DB_PORT")
     }
 }
+
+TEST_RUNNER = "django.test.runner.DiscoverRunner"
+
+DATABASES["default"]["TEST"] = {
+    "MIRROR": "default",
+}
+
 LOGIN_URL = 'login_view'
 
 AUTHENTICATION_BACKENDS = [

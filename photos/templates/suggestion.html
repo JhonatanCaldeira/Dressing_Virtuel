@@ -18,7 +18,7 @@
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {{ field }}
                         {% if field.errors %}
-                            <div class="alert alert-dismissible alert-danger">
+                            <div class="alert alert-dismissible alert-danger" aria-live="assertive">
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 {% for error in field.errors %}
                                     <p>{{ error }}</p>
@@ -28,7 +28,7 @@
                     </div>
                     {% endfor %}
                     {% if form.non_field_errors %}
-                        <div class="alert alert-dismissible alert-danger">
+                        <div class="alert alert-dismissible alert-danger" aria-live="assertive">
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             {% for error in form.non_field_errors %}
                                 <p>{{ error }}</p>

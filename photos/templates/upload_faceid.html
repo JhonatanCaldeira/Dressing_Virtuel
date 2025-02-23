@@ -33,7 +33,7 @@
                                         {{ form.face_image }}
                                         <!-- Exibir erros caso existam -->
                                         {% if form.face_image.errors %}
-                                            <div class="alert alert-danger" role="alert">
+                                            <div class="alert alert-danger" role="alert" aria-live="assertive">
                                                 {% for error in form.face_image.errors %}
                                                     <p>{{ error }}</p>
                                                 {% endfor %}
