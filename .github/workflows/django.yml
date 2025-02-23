@@ -9,14 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      backend:
-        image: ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
-        ports:
-          - 5005:5005
-          - 5000:5000
-          - 5010:5010
-          - 5432:5432
 
     steps:
       - name: Checkout repository
@@ -27,6 +19,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Start Backend Container
+        run: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
+          docker run -d --name backend_container \
+            -p 5005:5005 -p 5000:5000 -p 5010:5010 -p 5432:5432 \
+            ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
+          sleep 10  # Wait for the backend to be fully up
 
       - name: Pass secrets as environment variables
         run: |
