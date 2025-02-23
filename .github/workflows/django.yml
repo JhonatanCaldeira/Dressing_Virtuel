@@ -21,7 +21,7 @@ jobs:
       #     retries: 5
 
       backend:
-        image: jhonatancaldeira/dressing_virtuel_data_collector:latest
+        image: jhonatancaldeira/dressing_virtuel_data_collector:1.0.48
         ports:
           - 5005:5005
           - 5000:5000
