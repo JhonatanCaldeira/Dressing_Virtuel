@@ -54,17 +54,23 @@ jobs:
         run: |
           VERSION=1.0.${{ github.run_number }}
           IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_django:$VERSION"
+          IMAGE_NAME_LAST="${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_django:latest"
           echo ---Building docker image---
-          docker build -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME -t $IMAGE_NAME_LAST .
           echo ---Starting up docker---
           docker compose -f docker-compose.yml up -d
           sleep 10  # Wait for services to start
           docker ps -a
-          docker exec -it dressing_virtuel_django psql -h postgres -U postgres -d mydatabase
-
 
       - name: Run Django Tests
         run: |
           echo ---Running test cases---
           docker compose exec -T vrituel_dressing_frontend python manage.py test --noinput
           echo ---Completed test cases---
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          VERSION=1.0.${{ github.run_number }}
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_django:$VERSION"
+          echo ---Pushing Docker image---
+          docker push $IMAGE_NAME
