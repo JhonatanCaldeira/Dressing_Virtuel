@@ -10,26 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     services:
-      # postgres:
-      #   image: jhonatancaldeira/postgres_dressing-virtuel:latest
-      #   ports:
-      #     - 5432:5432
-      #   healthcheck:
-      #     test: ["CMD-SHELL", "pg_isready -U postgres"]
-      #     interval: 10s
-      #     timeout: 5s
-      #     retries: 5
-
       backend:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
         image: ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
         ports:
           - 5005:5005
@@ -40,7 +21,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -49,7 +30,7 @@ jobs:
 
       - name: Pass secrets as environment variables
         run: |
-          mkdir config/
+          mkdir -p config/
           cd config/
           echo "IMAGE_TMP_DIR=${{ secrets.IMAGE_TMP_DIR }}" >> .env
           echo "IMAGE_STORAGE_DIR=${{ secrets.IMAGE_STORAGE_DIR }}" >> .env
@@ -69,7 +50,7 @@ jobs:
           cat .env
           cd ..
 
-      - name: Build docker image
+      - name: Build and Start Backend
         run: |
           VERSION=1.0.${{ github.run_number }}
           IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_django:$VERSION"
@@ -77,10 +58,11 @@ jobs:
           docker build -t $IMAGE_NAME .
           echo ---Starting up docker---
           docker compose -f docker-compose.yml up -d
-
-      - name: Run test
-        run: | 
-          echo ---Running test cases---
+          sleep 10  # Wait for services to start
           docker ps -a
-          docker compose exec dressing_virtuel_django python manage.py test --noinput 
-          echo ---Completed test cases---  
+
+      - name: Run Django Tests
+        run: |
+          echo ---Running test cases---
+          docker compose exec -T dressing_virtuel_django python manage.py test --noinput
+          echo ---Completed test cases---
