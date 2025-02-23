@@ -21,7 +21,16 @@ jobs:
       #     retries: 5
 
       backend:
-        image: jhonatancaldeira/dressing_virtuel_data_collector:1.0.48
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+        image: ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
         ports:
           - 5005:5005
           - 5000:5000
