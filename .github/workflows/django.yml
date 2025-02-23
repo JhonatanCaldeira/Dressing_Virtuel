@@ -20,13 +20,13 @@ jobs:
       #     timeout: 5s
       #     retries: 5
 
-    backend:
-      image: ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
-      ports:
-        - 5005:5005
-        - 5000:5000
-        - 5010:5010
-        - 5432:5432
+      backend:
+        image: ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
+        ports:
+          - 5005:5005
+          - 5000:5000
+          - 5010:5010
+          - 5432:5432
 
     steps:
       - name: Checkout repository
