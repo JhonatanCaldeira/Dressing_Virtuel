@@ -21,7 +21,7 @@ jobs:
       #     retries: 5
 
       backend:
-        image: ${{ secrets.DOCKER_USERNAME }}/dressing_virtuel_data_collector:latest
+        image: jhonatancaldeira/dressing_virtuel_data_collector:latest
         ports:
           - 5005:5005
           - 5000:5000
@@ -44,16 +44,11 @@ jobs:
           cd config/
           echo "IMAGE_TMP_DIR=${{ secrets.IMAGE_TMP_DIR }}" >> .env
           echo "IMAGE_STORAGE_DIR=${{ secrets.IMAGE_STORAGE_DIR }}" >> .env
-          echo "BROKER_SERVER=${{ secrets.BROKER_SERVER }}" >> .env
           echo "PG_DB_HOST=${{ secrets.PG_DB_HOST }}" >> .env
           echo "PG_DB_USER=${{ secrets.PG_DB_USER }}" >> .env
           echo "PG_DB_PORT=${{ secrets.PG_DB_PORT }}" >> .env
           echo "PG_DB_NAME=${{ secrets.PG_DB_NAME }}" >> .env
           echo "PG_DB_PASSWORD=${{ secrets.PG_DB_PASSWORD }}" >> .env
-          echo "MODELS_API_KEY=${{ secrets.MODELS_API_KEY }}" >> .env
-          echo "MODELS_API_SERVER=${{ secrets.MODELS_API_SERVER }}" >> .env
-          echo "MODELS_API_PORT=${{ secrets.MODELS_API_PORT }}" >> .env
-          echo "MODELS_API_ENDPOINT=${{ secrets.MODELS_API_ENDPOINT }}" >> .env
           echo "PG_API_ENDPONT=${{ secrets.PG_API_ENDPONT }}" >> .env
           echo "PG_API_SERVER=${{ secrets.PG_API_SERVER }}" >> .env
           echo "PG_API_PORT=${{ secrets.PG_API_PORT }}" >> .env
@@ -62,9 +57,6 @@ jobs:
           echo "CELERY_API_SERVER=${{ secrets.CELERY_API_SERVER }}" >> .env
           echo "CELERY_API_PORT=${{ secrets.CELERY_API_PORT }}" >> .env
           echo "CELERY_API_KEY=${{ secrets.CELERY_API_KEY }}" >> .env
-          echo "OBJ_DETECTION_MODEL_NAME=${{ secrets.OBJ_DETECTION_MODEL_NAME }}" >> .env
-          echo "CLASSIFICATION_MODEL_NAME=${{ secrets.CLASSIFICATION_MODEL_NAME }}" >> .env
-          echo "SEGMENTATION_MODEL_NAME=${{ secrets.SEGMENTATION_MODEL_NAME }}" >> .env
           cat .env
           cd ..
 
