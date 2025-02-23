@@ -34,7 +34,7 @@ jobs:
           cd config/
           echo "IMAGE_TMP_DIR=${{ secrets.IMAGE_TMP_DIR }}" >> .env
           echo "IMAGE_STORAGE_DIR=${{ secrets.IMAGE_STORAGE_DIR }}" >> .env
-          echo "PG_DB_HOST=localhost" >> .env
+          echo "PG_DB_HOST=postgres" >> .env
           echo "PG_DB_USER=${{ secrets.PG_DB_USER }}" >> .env
           echo "PG_DB_PORT=${{ secrets.PG_DB_PORT }}" >> .env
           echo "PG_DB_NAME=${{ secrets.PG_DB_NAME }}" >> .env
@@ -60,6 +60,8 @@ jobs:
           docker compose -f docker-compose.yml up -d
           sleep 10  # Wait for services to start
           docker ps -a
+          docker exec -it dressing_virtuel_django psql -h postgres -U postgres -d mydatabase
+
 
       - name: Run Django Tests
         run: |
