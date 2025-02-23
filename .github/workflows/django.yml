@@ -64,5 +64,5 @@ jobs:
       - name: Run Django Tests
         run: |
           echo ---Running test cases---
-          docker compose exec -T dressing_virtuel_django python manage.py test --noinput
+          docker compose exec -T vrituel_dressing_frontend python manage.py test --noinput
           echo ---Completed test cases---
