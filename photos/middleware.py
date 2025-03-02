@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, include
 
 class ClientProfileAuthenticationMiddleware:
     """
@@ -11,7 +11,7 @@ class ClientProfileAuthenticationMiddleware:
 
     def __call__(self, request):
         # Allowed Urls whitout authentication
-        allowed_urls = [reverse('login_view'), reverse('create_user')]
+        allowed_urls = [reverse('login_view'), reverse('create_user'), '/metrics']
 
         if request.path not in allowed_urls and not request.session.get('client_id'):
             return redirect('login_view')

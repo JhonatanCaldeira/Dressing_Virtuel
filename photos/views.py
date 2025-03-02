@@ -110,7 +110,7 @@ def upload_photos(request):
                 form.add_error('photos', 
                                'You can upload a maximum of 10 photos.')
                 return render(request, 
-                              'upload_temp_photos.html', {'form': form})
+                              'upload_photos.html', {'form': form})
             
             image_paths = []
             tmp_dir = os.path.join(settings.MEDIA_ROOT, str(user_id), 'tmp')

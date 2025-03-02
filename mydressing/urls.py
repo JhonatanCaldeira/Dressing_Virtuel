@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from photos.views import (
     upload_photos,
     create_user,
@@ -53,6 +53,8 @@ urlpatterns = [
     #Image product management
     path('edit_image_product/<int:image_product_id>/', edit_image_product, 
          name='edit_image_product'),
+    path('', include('django_prometheus.urls'), name='metrics'),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
